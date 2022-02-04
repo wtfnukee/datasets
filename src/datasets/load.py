@@ -938,40 +938,75 @@ class CachedDatasetModuleFactory(_DatasetModuleFactory):
         hashes = (
             [h for h in os.listdir(importable_directory_path) if len(h) == 64]
             if os.path.isdir(importable_directory_path)
-            else None
+            else []
         )
-        if not hashes:
-            raise FileNotFoundError(f"Dataset {self.name} is not cached in {dynamic_modules_path}")
-        # get most recent
+        if hashes:
+            # get most recent
 
-        def _get_modification_time(module_hash):
-            return (Path(importable_directory_path) / module_hash / (self.name.split("/")[-1] + ".py")).stat().st_mtime
+            def _get_modification_time(module_hash):
+                return (Path(importable_directory_path) / module_hash / (self.name.split("/")[-1] + ".py")).stat().st_mtime
 
-        hash = sorted(hashes, key=_get_modification_time)[-1]
-        warning_msg = (
-            f"Using the latest cached version of the module from {os.path.join(importable_directory_path, hash)} "
-            f"(last modified on {time.ctime(_get_modification_time(hash))}) since it "
-            f"couldn't be found locally at {self.name}."
-        )
-        if not config.HF_DATASETS_OFFLINE:
-            warning_msg += ", or remotely on the Hugging Face Hub."
-        logger.warning(warning_msg)
-        # make the new module to be noticed by the import system
-        module_path = ".".join(
-            [
-                os.path.basename(dynamic_modules_path),
-                "datasets",
-                self.name.replace("/", "--"),
-                hash,
-                self.name.split("/")[-1],
+            hash = sorted(hashes, key=_get_modification_time)[-1]
+            warning_msg = (
+                f"Using the latest cached version of the module from {os.path.join(importable_directory_path, hash)} "
+                f"(last modified on {time.ctime(_get_modification_time(hash))}) since it "
+                f"couldn't be found locally at {self.name}."
+            )
+            if not config.HF_DATASETS_OFFLINE:
+                warning_msg += ", or remotely on the Hugging Face Hub."
+            logger.warning(warning_msg)
+            # make the new module to be noticed by the import system
+            module_path = ".".join(
+                [
+                    os.path.basename(dynamic_modules_path),
+                    "datasets",
+                    self.name.replace("/", "--"),
+                    hash,
+                    self.name.split("/")[-1],
+                ]
+            )
+            importlib.invalidate_caches()
+            builder_kwargs = {
+                "hash": hash,
+                "namespace": self.name.split("/")[0] if self.name.count("/") > 0 else None,
+            }
+            return DatasetModule(module_path, hash, builder_kwargs)
+        else:
+            import glob
+            packaged_modules_cache_paths = [
+                os.path.join(config.HF_DATASETS_CACHE, module_name)
+                for module_name in _PACKAGED_DATASETS_MODULES
             ]
-        )
-        importlib.invalidate_caches()
-        builder_kwargs = {
-            "hash": hash,
-            "namespace": self.name.split("/")[0] if self.name.count("/") > 0 else None,
-        }
-        return DatasetModule(module_path, hash, builder_kwargs)
+            cache_paths_with_compatible_names = [
+                os.path.join(packaged_modules_cache_path, dir_name)
+                for packaged_modules_cache_path in packaged_modules_cache_paths
+                if os.path.isdir(packaged_modules_cache_path)
+                for dir_name in glob.glob(os.path.join(packaged_modules_cache_path, self.name.replace("/", "--") + "-*"))
+            ]
+            cache_paths = [
+                os.path.join(cache_path, subdir)
+                for cache_path in cache_paths_with_compatible_names
+                for subdir in glob.glob(os.path.join(cache_path, "*", "*"))
+                if list(os.listdir(os.path.join(cache_path, subdir)))
+            ]
+            if cache_paths:
+
+                def _get_modification_time(cache_path):
+                    return (Path(cache_path) / list(os.listdir(cache_path))[0]).stat().st_mtime
+
+                cache_path = sorted(cache_paths, key=_get_modification_time)[-1]
+                module_name = Path(cache_path).parent.parent.parent.name
+                module_path = _PACKAGED_DATASETS_MODULES[module_name][0]
+                hash = Path(cache_path).name
+                name = Path(cache_path).parent.parent.name
+                builder_kwargs = {
+                    "hash": hash,
+                    "name": name,
+                }
+                return DatasetModule(module_path, hash, builder_kwargs)
+
+        if not hashes:
+            raise FileNotFoundError(f"Dataset {self.name} is not cached in {dynamic_modules_path} or in any pachaked module cache (json, cvs, etc.)")
 
 
 class CachedMetricModuleFactory(_MetricModuleFactory):
