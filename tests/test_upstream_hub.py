@@ -6,6 +6,7 @@ from os.path import expanduser
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch
+import requests
 
 import numpy as np
 from huggingface_hub import HfApi
@@ -110,7 +111,13 @@ class TestPushToHub(TestCase):
             files = sorted(self._api.list_repo_files(ds_name, repo_type="dataset"))
             self.assertListEqual(files, [".gitattributes", "data/train-00000-of-00001.parquet", "dataset_infos.json"])
         finally:
-            self._api.delete_repo(ds_name.split("/")[1], organization=ds_name.split("/")[0], repo_type="dataset")
+            # TODO(QL): remove try/except here used to debug why we get some 409 errors, once this is fixed
+            try:
+                self._api.delete_repo(ds_name.split("/")[1], organization=ds_name.split("/")[0], repo_type="dataset")
+            except requests.exceptions.HTTPError:  # sometimes we get a 409 error here, let's try to debug why
+                # is the repo already deleted ?
+                self._api.dataset_info(ds_name)
+                raise
 
     def test_push_dataset_dict_to_hub_private(self):
         ds = Dataset.from_dict({"x": [1, 2, 3], "y": [4, 5, 6]})
