@@ -91,8 +91,11 @@ Examples:
         >>> list_of_references = [[ref1a], [ref2a]]
         >>> hypotheses = [hyp1, hyp2]
         >>> google_bleu = datasets.load_metric("google_bleu")
-        >>> results = google_bleu.compute(predictions=hypotheses, references=list_of_references)
-        >>> print(round(results["google_bleu"], 2))
+        >>> results_sentence_level = google_bleu.compute(predictions=hypotheses, references=list_of_references)
+        >>> results_corpus_level = google_bleu.compute(predictions=hypotheses, references=list_of_references, sentence_level=False)
+        >>> print([round(score, 2) for score in results_sentence_level["google_bleu"]])
+        [0.24, 0.79]
+        >>> print(round(results_corpus_level["google_bleu"], 2))
         0.44
 
     Example 2:
@@ -117,8 +120,11 @@ Examples:
         >>> list_of_references = [[ref1a, ref1b, ref1c], [ref2a]]
         >>> hypotheses = [hyp1, hyp2]
         >>> google_bleu = datasets.load_metric("google_bleu")
-        >>> results = google_bleu.compute(predictions=hypotheses, references=list_of_references)
-        >>> print(round(results["google_bleu"], 2))
+        >>> results_sentence_level = google_bleu.compute(predictions=hypotheses, references=list_of_references)
+        >>> results_corpus_level = google_bleu.compute(predictions=hypotheses, references=list_of_references, sentence_level=False)
+        >>> print([round(score, 2) for score in results_sentence_level["google_bleu"]])
+        [0.51, 0.79]
+        >>> print(round(results_corpus_level["google_bleu"], 2))
         0.61
 
     Example 3:
@@ -143,8 +149,11 @@ Examples:
         >>> list_of_references = [[ref1a, ref1b, ref1c], [ref2a]]
         >>> hypotheses = [hyp1, hyp2]
         >>> google_bleu = datasets.load_metric("google_bleu")
-        >>> results = google_bleu.compute(predictions=hypotheses, references=list_of_references, min_len=2)
-        >>> print(round(results["google_bleu"], 2))
+        >>> results_sentence_level_level = google_bleu.compute(predictions=hypotheses, references=list_of_references, min_len=2)
+        >>> results_corpus_level = google_bleu.compute(predictions=hypotheses, references=list_of_references, min_len=2, sentence_level=False)
+        >>> print([round(score, 2) for score in results_sentence_level["google_bleu"]])
+        [0.43, 0.70]
+        >>> print(round(results_corpus_level["google_bleu"], 2))
         0.53
 
     Example 4:
@@ -169,8 +178,11 @@ Examples:
         >>> list_of_references = [[ref1a, ref1b, ref1c], [ref2a]]
         >>> hypotheses = [hyp1, hyp2]
         >>> google_bleu = datasets.load_metric("google_bleu")
-        >>> results = google_bleu.compute(predictions=hypotheses,references=list_of_references, min_len=2, max_len=6)
-        >>> print(round(results["google_bleu"], 2))
+        >>> results_sentence_level = google_bleu.compute(predictions=hypotheses,references=list_of_references, min_len=2, max_len=6)
+        >>> results_corpus_level = google_bleu.compute(predictions=hypotheses,references=list_of_references, min_len=2, max_len=6, sentence_level=False)
+        >>> print([round(score, 2) for score in results_sentence_level["google_bleu"]])
+        [0.33, 0.55]
+        >>> print(round(results_corpus_level["google_bleu"], 2))
         0.4
 """
 
