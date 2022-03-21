@@ -65,6 +65,9 @@ Args:
         Each translation should be tokenized into a list of tokens.
     references (list of list of str): list of lists of references for each translation.
         Each reference should be tokenized into a list of tokens.
+    sentence_level (boolean): If True, calculates google bleu scores at the sentence level,
+        and returns a list of scores. If False, calculates score on the corpus level,
+        returning a single score. Defaults to True.
     min_len (int): The minimum order of n-gram this function should extract. Defaults to 1.
     max_len (int): The maximum order of n-gram this function should extract. Defaults to 4.
 
@@ -193,11 +196,19 @@ class GoogleBleu(datasets.Metric):
         self,
         predictions: List[List[List[str]]],
         references: List[List[str]],
+        sentence_level: bool = True,
         min_len: int = 1,
         max_len: int = 4,
     ) -> Dict[str, float]:
-        return {
-            "google_bleu": gleu_score.corpus_gleu(
-                list_of_references=references, hypotheses=predictions, min_len=min_len, max_len=max_len
-            )
-        }
+        if sentence_level:
+            return {
+                "google_bleu": gleu_score.sentence_gleu(
+                    list_of_references=reference, hypotheses=predictions, min_len=min_len, max_len=max_len
+                )
+            }
+        else:
+            return {
+                "google_bleu": gleu_score.corpus_gleu(
+                    list_of_references=references, hypotheses=predictions, min_len=min_len, max_len=max_len
+                )
+            }
