@@ -201,11 +201,10 @@ class GoogleBleu(datasets.Metric):
         max_len: int = 4,
     ) -> Dict[str, float]:
         if sentence_level:
-            return {
-                "google_bleu": gleu_score.sentence_gleu(
-                    list_of_references=references, hypotheses=predictions, min_len=min_len, max_len=max_len
-                )
-            }
+            sentence_scores = []
+            for pred, refs in zip(predictions, references):
+                sentence_scores.append(gleu_score.sentence_gleu(references=refs, hypothesis=pred, min_len=min_len, max_len=max_len))
+            return {"google_bleu": sentence_scores}
         else:
             return {
                 "google_bleu": gleu_score.corpus_gleu(
