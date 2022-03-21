@@ -203,7 +203,7 @@ class GoogleBleu(datasets.Metric):
         if sentence_level:
             return {
                 "google_bleu": gleu_score.sentence_gleu(
-                    list_of_references=reference, hypotheses=predictions, min_len=min_len, max_len=max_len
+                    list_of_references=references, hypotheses=predictions, min_len=min_len, max_len=max_len
                 )
             }
         else:
