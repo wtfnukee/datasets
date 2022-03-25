@@ -10,6 +10,7 @@ from datasets import load_from_disk
 from datasets.arrow_dataset import Dataset
 from datasets.dataset_dict import DatasetDict
 from datasets.features import ClassLabel, Features, Sequence, Value
+from datasets.fingerprint import Hasher
 from datasets.splits import NamedSplit
 
 from .conftest import s3_test_bucket_name
@@ -245,6 +246,42 @@ class DatasetDictTest(TestCase):
             self.assertListEqual(list(dsets.keys()), list(mapped_dsets_2.keys()))
             self.assertListEqual(sorted(mapped_dsets_2["train"].column_names), sorted(["filename", "foo", "bar"]))
             del dsets, mapped_dsets_1, mapped_dsets_2
+
+    def test_map_cache_stateful_functions(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            dsets = self._create_dummy_dataset_dict().map(
+                cache_file_names={
+                    "train": os.path.join(tmp_dir, "train.arrow"),
+                    "test": os.path.join(tmp_dir, "test.arrow"),
+                }
+            )
+
+            def func(x):
+                nonlocal counter
+                counter += 1
+                return x
+
+            counter = 0
+            func_hash = Hasher.hash(func)
+            # this should updates the state of the function
+            mapped_dsets_1: DatasetDict = dsets.map(func)
+            self.assertNotEqual(Hasher.hash(func), func_hash)
+            self.assertEqual(counter, sum(len(dset) for dset in dsets.values()))
+            self.assertDictEqual(
+                {split: len(dset) for split, dset in mapped_dsets_1.items()},
+                {split: len(dset) for split, dset in dsets.items()},
+            )
+
+            counter = 0
+            self.assertEqual(Hasher.hash(func), func_hash)
+            # this shouldn't update the state of the function, since it uses cached results
+            mapped_dsets_2: DatasetDict = dsets.map(func)
+            self.assertEqual(Hasher.hash(func), func_hash)
+            self.assertEqual(counter, 0)
+            self.assertDictEqual(
+                {split: len(dset) for split, dset in mapped_dsets_2.items()},
+                {split: len(dset) for split, dset in dsets.items()},
+            )
 
     def test_filter(self):
         with tempfile.TemporaryDirectory() as tmp_dir:
