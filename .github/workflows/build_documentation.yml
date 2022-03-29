@@ -9,7 +9,7 @@ on:
 
 jobs:
    build:
-    uses: huggingface/doc-builder/.github/workflows/build_main_documentation.yml@main
+    uses: huggingface/doc-builder/.github/workflows/build_main_documentation.yml@multilingual-support
     with:
       commit_sha: ${{ github.sha }}
       package: datasets
