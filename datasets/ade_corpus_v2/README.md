@@ -34,6 +34,54 @@ task_ids:
   - coreference-resolution
 paperswithcode_id: null
 pretty_name: Adverse Drug Reaction Data v2
+train-eval-index:
+- config: Ade_corpus_v2_classification
+  task: text-classification
+  task_id: multi_class_classification
+  splits:
+    train_split: train
+  col_mapping:
+    text: text
+    label: target
+  metrics:
+    - type: accuracy
+      name: Accuracy
+    - type: f1
+      name: F1 macro
+      args:
+        average: macro
+    - type: f1
+      name: F1 micro
+      args:
+        average: micro  
+    - type: f1
+      name: F1 weighted
+      args:
+        average: weighted
+    - type: precision
+      name: Precision macro
+      args:
+        average: macro  
+    - type: precision
+      name: Precision micro
+      args:
+        average: micro  
+    - type: precision
+      name: Precision weighted
+      args:
+        average: weighted  
+    - type: recall
+      name: Recall macro
+      args:
+        average: macro  
+    - type: recall
+      name: Recall micro
+      args:
+        average: micro  
+    - type: recall
+      name: Recall weighted
+      args:
+        average: weighted
 ---
 
 # Dataset Card for Adverse Drug Reaction Data v2
@@ -93,7 +141,7 @@ English
 #### Config - `Ade_corpus_v2_classification`
 ```
 {
-      'label': 1, 
+      'label': 1,
       'text': 'Intravenous azithromycin-induced ototoxicity.'
 }
 
@@ -102,21 +150,21 @@ English
 #### Config - `Ade_corpus_v2_drug_ade_relation`
 
 ```
-{ 
-    'drug': 'azithromycin', 
-    'effect': 'ototoxicity', 
+{
+    'drug': 'azithromycin',
+    'effect': 'ototoxicity',
     'indexes': {
                   'drug': {
-                            'end_char': [24], 
+                            'end_char': [24],
                             'start_char': [12]
-                          }, 
+                          },
                   'effect': {
-                            'end_char': [44], 
+                            'end_char': [44],
                             'start_char': [33]
                             }
-                }, 
+                },
     'text': 'Intravenous azithromycin-induced ototoxicity.'
-    
+
 }
 
 ```
@@ -125,17 +173,17 @@ English
 
 ```
 {
-    'dosage': '4 times per day', 
-    'drug': 'insulin', 
+    'dosage': '4 times per day',
+    'drug': 'insulin',
     'indexes': {
                 'dosage': {
-                            'end_char': [56], 
+                            'end_char': [56],
                             'start_char': [41]
-                        }, 
+                        },
                 'drug': {
-                          'end_char': [40], 
+                          'end_char': [40],
                           'start_char': [33]}
-                        }, 
+                        },
     'text': 'She continued to receive regular insulin 4 times per day over the following 3 years with only occasional hives.'
 }
 
@@ -148,7 +196,7 @@ English
 
 - `text` - Input text.
 - `label` - Whether the adverse drug effect(ADE) related (1) or not (0).
-- 
+-
 #### Config - `Ade_corpus_v2_drug_ade_relation`
 
 - `text` - Input text.
@@ -173,7 +221,7 @@ English
 ### Data Splits
 
 | Train  |
-| ------ | 
+| ------ |
 | 23516  |
 
 ## Dataset Creation
