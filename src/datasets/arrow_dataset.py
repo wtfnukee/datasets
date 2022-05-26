@@ -1606,9 +1606,7 @@ class Dataset(DatasetInfoMixin, IndexableMixin, TensorflowDatasetMixin):
             del dataset._info.features[column_name]
 
         if self._format_columns is not None:
-            for column_name in column_names:
-                if column_name in self._format_columns:
-                    del dataset._format_columns[column_name]
+            dataset._format_columns = [col for col in self._format_columns if col not in column_names]
 
         dataset._data = dataset._data.drop(column_names)
         dataset._data = update_metadata_with_features(dataset._data, dataset.features)
