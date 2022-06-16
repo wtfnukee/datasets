@@ -43,7 +43,7 @@ class TestPushToHub(TestCase):
 
     def cleanup_repo(self, ds_name):
         organization, name = ds_name.split("/")
-        delete_repo(hf_api=self._api, repo_id=name, organization=organization, token=self._token, repo_type="dataset")
+        delete_repo(hf_api=self._api, name=name, organization=organization, token=self._token, repo_type="dataset")
 
     @classmethod
     def setUpClass(cls):
