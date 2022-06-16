@@ -14,6 +14,8 @@ from huggingface_hub.hf_api import HfFolder
 
 from datasets import Audio, ClassLabel, Dataset, DatasetDict, Features, Image, Value, load_dataset
 from datasets.utils._hf_hub_fixes import delete_repo
+
+from tests.hub_fixtures import TOKEN
 from tests.utils import require_pil, require_sndfile
 
 
@@ -41,7 +43,7 @@ class TestPushToHub(TestCase):
 
     def cleanup_repo(self, ds_name):
         organization, name = ds_name.split("/")
-        delete_repo(hf_api=self._api, name=name, organization=organization, token=self._token, repo_type="dataset")
+        delete_repo(hf_api=self._api, repo_id=name, organization=organization, token=self._token, repo_type="dataset")
 
     @classmethod
     def setUpClass(cls):
@@ -54,12 +56,14 @@ class TestPushToHub(TestCase):
         )
         cls._hf_folder_patch.start()
 
-        cls._token = cls._api.login(username=USER, password=PASS)
+        cls._token = TOKEN
+        cls._api.set_access_token(TOKEN)
         HfFolder.save_token(cls._token)
 
     @classmethod
     def tearDownClass(cls) -> None:
         HfFolder.delete_token()
+        cls._api.unset_access_token()
         cls._hf_folder_patch.stop()
 
     def test_push_dataset_dict_to_hub_no_token(self):
