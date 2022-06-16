@@ -88,7 +88,7 @@ REQUIRED_PKGS = [
     # for data streaming via http
     "aiohttp",
     # To get datasets from the Datasets Hub on huggingface.co
-    "huggingface-hub>=0.1.0,<1.0.0",
+    "huggingface-hub==0.8.0.rc1",
     # Utilities from PyPA to e.g., compare versions
     "packaging",
     "responses<0.19",
