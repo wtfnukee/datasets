@@ -782,7 +782,7 @@ def test_loading_from_the_datasets_hub_with_use_auth_token():
 
 
 @pytest.mark.skipif(
-    os.name == "nt", reason="skip on windows because of SSL issues with moon-staging.huggingface.co:443"
+    os.name == "nt", reason="skip on windows because of SSL issues with hub-ci.huggingface.co:443"
 )
 def test_load_streaming_private_dataset(hf_token, hf_private_dataset_repo_txt_data):
     with pytest.raises(FileNotFoundError):
@@ -792,7 +792,7 @@ def test_load_streaming_private_dataset(hf_token, hf_private_dataset_repo_txt_da
 
 
 @pytest.mark.skipif(
-    os.name == "nt", reason="skip on windows because of SSL issues with moon-staging.huggingface.co:443"
+    os.name == "nt", reason="skip on windows because of SSL issues with hub-ci.huggingface.co:443"
 )
 def test_load_streaming_private_dataset_with_zipped_data(hf_token, hf_private_dataset_repo_zipped_txt_data):
     with pytest.raises(FileNotFoundError):

@@ -20,7 +20,7 @@ from tests.utils import require_pil, require_sndfile
 
 
 REPO_NAME = f"repo-{int(time.time() * 10e3)}"
-ENDPOINT_STAGING = "https://moon-staging.huggingface.co"
+ENDPOINT_STAGING = "https://hub-ci.huggingface.co"
 
 # Should create a __DUMMY_DATASETS_USER__ :)
 USER = "__DUMMY_TRANSFORMERS_USER__"
