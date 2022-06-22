@@ -42,8 +42,7 @@ _CITATION = """\
 }
 """
 
-_DOWNLOAD_URL = "http://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz"
-
+_DOWNLOAD_URL = "https://drive.google.com/uc?export=download&id=17zfrC1LzdqKRF9dxjTgsnbrE-FVV6fEl"
 
 class IMDBReviewsConfig(datasets.BuilderConfig):
     """BuilderConfig for IMDBReviews."""
