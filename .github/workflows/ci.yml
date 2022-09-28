@@ -5,8 +5,8 @@ on:
     branches:
       - main
   push:
-    branches:
-      - main
+#    branches:
+#      - main
 
 env:
   HF_SCRIPTS_VERSION: main
