@@ -36,7 +36,7 @@ jobs:
     needs: check_code_quality
     strategy:
       matrix:
-        test: ['unit', 'integration']
+        test: ['integration']  # 'unit',
         os: [ubuntu-latest, windows-latest]
         pyarrow_version: [latest, 6.0.1]
     continue-on-error: ${{ matrix.test == 'integration' }}
@@ -71,7 +71,7 @@ jobs:
         run: pip install pyarrow==${{ matrix.pyarrow_version }}
       - name: Test with pytest
         run: |
-          python -m pytest -rfExX -m ${{ matrix.test }} -n 2 --dist loadfile -sv tests/test_dataset_common.py::PackagedDatasetTest --durations 0
+          python -m pytest -rfExX -m ${{ matrix.test }} -n 2 --dist loadfile -sv ./tests/test_dataset_common.py::PackagedDatasetTest --durations 0
 #      - name: Install dependencies to test torchaudio>=0.12 on Ubuntu
 #        if: ${{ matrix.os == 'ubuntu-latest' }}
 #        run: |
