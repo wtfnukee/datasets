@@ -14,26 +14,26 @@ env:
 
 jobs:
 
-  check_code_quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.7"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install .[quality]
-      - name: Check quality
-        run: |
-          black --check --line-length 119 --target-version py36 tests src benchmarks datasets metrics
-          isort --check-only tests src benchmarks datasets metrics
-          flake8 tests src benchmarks datasets metrics
+#  check_code_quality:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up Python
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: "3.7"
+#      - name: Install dependencies
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install .[quality]
+#      - name: Check quality
+#        run: |
+#          black --check --line-length 119 --target-version py36 tests src benchmarks datasets metrics
+#          isort --check-only tests src benchmarks datasets metrics
+#          flake8 tests src benchmarks datasets metrics
 
   test:
-    needs: check_code_quality
+#    needs: check_code_quality
     strategy:
       matrix:
         test: ['integration']  # 'unit',
