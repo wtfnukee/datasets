@@ -758,7 +758,7 @@ def test_load_dataset_streaming_csv(path_extension, streaming, csv_path, bz2_csv
 
 @require_pil
 @pytest.mark.integration
-@pytest.mark.parametrize("streaming", [False, True])
+@pytest.mark.parametrize("streaming", [True, False])
 def test_load_dataset_private_zipped_images(hf_private_dataset_repo_zipped_img_data, hf_token, streaming):
     ds = load_dataset(
         hf_private_dataset_repo_zipped_img_data, split="train", streaming=streaming, use_auth_token=hf_token
