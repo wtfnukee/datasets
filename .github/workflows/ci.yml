@@ -69,7 +69,7 @@ jobs:
         if: ${{ matrix.deps_versions == 'latest' }}
         run: |
           pip uninstall -y apache-beam
-          pip install --upgrade pyarrow "huggingface-hub==0.11.0.rc0" dill
+          pip install --upgrade pyarrow "huggingface-hub==0.11.0.rc1" dill
       - name: Install dependencies (minimum versions)
         if: ${{ matrix.deps_versions != 'latest' }}
         run: pip install pyarrow==6.0.1 huggingface-hub==0.2.0 transformers dill==0.3.1.1
